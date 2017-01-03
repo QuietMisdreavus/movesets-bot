@@ -1,2 +1,5 @@
 target
 *.swp
+consumer_key
+consumer_secret
+twitter_settings
