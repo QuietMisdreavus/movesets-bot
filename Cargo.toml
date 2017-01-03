@@ -7,3 +7,4 @@ authors = ["QuietMisdreavus <grey@quietmisdreavus.net>"]
 egg-mode = "0.7.0"
 csv = "0.15.0"
 rand = "0.3.15"
+rustc-serialize = "0.3.22"
