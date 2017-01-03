@@ -1,0 +1,9 @@
+[package]
+name = "movesets-bot"
+version = "0.1.0"
+authors = ["QuietMisdreavus <grey@quietmisdreavus.net>"]
+
+[dependencies]
+egg-mode = "0.7.0"
+csv = "0.15.0"
+rand = "0.3.15"
