@@ -12,29 +12,37 @@ const CSV_PATH: &'static str = concat!(env!("CARGO_MANIFEST_DIR"), "/pokedex/pok
 
 fn main() {
     let env = Env::load();
-    let mut rng = rand::thread_rng();
-    let mut range = Range::new(0u8, 10u8);
 
     for _ in 0..10 {
-        let (ref id, ref name) = rand::sample(&mut rng, &env.pokemon_names, 1)[0];
-        let moves = rand::sample(&mut rng, env.pokemon_moves.get(id).unwrap(), 4);
-
-        print!("{} with ", name);
-
-        for (idx, move_id) in moves.into_iter().enumerate() {
-            if idx > 0 {
-                print!(", ");
-            }
-            print!("{}", env.move_names.get(move_id).unwrap());
-        }
-
-        if range.sample(&mut rng) < 7 {
-            let item = rand::sample(&mut rng, &env.items, 1)[0];
-            print!(", holding {}", item);
-        }
-
-        println!("");
+        println!("{}", make_pokemon(&env).unwrap());
     }
+}
+
+fn make_pokemon(env: &Env) -> Result<String, std::fmt::Error> {
+    use std::fmt::Write;
+
+    let mut ret = String::new();
+    let mut rng = rand::thread_rng();
+    let mut range = Range::new(0u8, 10);
+
+    let (ref id, ref name) = rand::sample(&mut rng, &env.pokemon_names, 1)[0];
+    let moves = rand::sample(&mut rng, env.pokemon_moves.get(id).unwrap(), 4);
+
+    write!(ret, "{} with ", name)?;
+
+    for (idx, move_id) in moves.into_iter().enumerate() {
+        if idx > 0 {
+            write!(ret, ", ")?;
+        }
+        write!(ret, "{}", env.move_names.get(move_id).unwrap())?;
+    }
+
+    if range.sample(&mut rng) < 7 {
+        let item = rand::sample(&mut rng, &env.items, 1)[0];
+        write!(ret, ", holding {}", item)?;
+    }
+
+    Ok(ret)
 }
 
 struct Env {
