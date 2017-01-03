@@ -6,8 +6,6 @@ extern crate rustc_serialize;
 use std::collections::{HashMap, HashSet};
 use std::path::Path;
 
-use rand::distributions::{Range, Sample};
-
 const CSV_PATH: &'static str = concat!(env!("CARGO_MANIFEST_DIR"), "/pokedex/pokedex/data/csv");
 
 fn main() {
@@ -23,23 +21,18 @@ fn make_pokemon(env: &Env) -> Result<String, std::fmt::Error> {
 
     let mut ret = String::new();
     let mut rng = rand::thread_rng();
-    let mut range = Range::new(0u8, 10);
 
     let (ref id, ref name) = rand::sample(&mut rng, &env.pokemon_names, 1)[0];
     let moves = rand::sample(&mut rng, env.pokemon_moves.get(id).unwrap(), 4);
 
-    write!(ret, "{} with ", name)?;
+    let item = rand::sample(&mut rng, &env.items, 1)[0];
 
-    for (idx, move_id) in moves.into_iter().enumerate() {
-        if idx > 0 {
-            write!(ret, ", ")?;
-        }
-        write!(ret, "{}", env.move_names.get(move_id).unwrap())?;
-    }
+    writeln!(ret, "{} @ {}", name, item)?;
 
-    if range.sample(&mut rng) < 7 {
-        let item = rand::sample(&mut rng, &env.items, 1)[0];
-        write!(ret, ", holding {}", item)?;
+    //TODO: ability
+
+    for move_id in moves {
+        writeln!(ret, "- {}", env.move_names.get(move_id).unwrap())?;
     }
 
     Ok(ret)
