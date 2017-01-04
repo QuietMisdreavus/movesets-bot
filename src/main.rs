@@ -39,10 +39,14 @@ fn main() {
     if !skip_twitter {
         let config = twitter::Config::load();
 
-        let mon = make_pokemon(&env).unwrap();
-        println!("new post: {}", mon);
-        let post = egg_mode::tweet::DraftTweet::new(&mon);
-        post.send(&config.con_token, &config.access_token).unwrap();
+        loop {
+            let mon = make_pokemon(&env).unwrap();
+            println!("new post: {}", mon);
+            let post = egg_mode::tweet::DraftTweet::new(&mon);
+            post.send(&config.con_token, &config.access_token).unwrap();
+
+            std::thread::sleep(std::time::Duration::from_secs(60*60*2));
+        }
     }
     else {
         println!("{}", make_pokemon(&env).unwrap());
