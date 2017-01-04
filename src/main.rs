@@ -6,14 +6,20 @@ extern crate rustc_serialize;
 use std::collections::{HashMap, HashSet};
 use std::path::Path;
 
+mod twitter;
+
 const CSV_PATH: &'static str = concat!(env!("CARGO_MANIFEST_DIR"), "/pokedex/pokedex/data/csv");
 
 fn main() {
+    let config = twitter::Config::load();
+
+    println!("loading pokemon information...");
     let env = Env::load();
 
-    for _ in 0..10 {
-        println!("{}", make_pokemon(&env).unwrap());
-    }
+    let mon = make_pokemon(&env).unwrap();
+    println!("new post: {}", mon);
+    let post = egg_mode::tweet::DraftTweet::new(&mon);
+    post.send(&config.con_token, &config.access_token).unwrap();
 }
 
 fn make_pokemon(env: &Env) -> Result<String, std::fmt::Error> {
