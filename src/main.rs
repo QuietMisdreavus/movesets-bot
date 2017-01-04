@@ -11,15 +11,42 @@ mod twitter;
 const CSV_PATH: &'static str = concat!(env!("CARGO_MANIFEST_DIR"), "/pokedex/pokedex/data/csv");
 
 fn main() {
-    let config = twitter::Config::load();
+    let mut skip_twitter = false;
+    let mut print_help = false;
+
+    for arg in std::env::args() {
+        if arg == "-h" || arg == "--help" {
+            print_help = true;
+        }
+        if arg == "-s" || arg == "--skip-twitter" {
+            skip_twitter = true;
+        }
+    }
+
+    if print_help {
+        println!("{} {}", env!("CARGO_PKG_NAME"), env!("CARGO_PKG_VERSION"));
+        println!("Generates random Pokemon movesets and item holding.");
+        println!("Usage:");
+        println!("    -h, --help: Print this message.");
+        println!("    -s, --skip-twitter: Instead of logging into Twitter and posting there,");
+        println!("                        prints one moveset to standard out.");
+        return;
+    }
 
     println!("loading pokemon information...");
     let env = Env::load();
 
-    let mon = make_pokemon(&env).unwrap();
-    println!("new post: {}", mon);
-    let post = egg_mode::tweet::DraftTweet::new(&mon);
-    post.send(&config.con_token, &config.access_token).unwrap();
+    if !skip_twitter {
+        let config = twitter::Config::load();
+
+        let mon = make_pokemon(&env).unwrap();
+        println!("new post: {}", mon);
+        let post = egg_mode::tweet::DraftTweet::new(&mon);
+        post.send(&config.con_token, &config.access_token).unwrap();
+    }
+    else {
+        println!("{}", make_pokemon(&env).unwrap());
+    }
 }
 
 fn make_pokemon(env: &Env) -> Result<String, std::fmt::Error> {
