@@ -29,7 +29,8 @@ fn make_pokemon(env: &Env) -> Result<String, std::fmt::Error> {
 
     writeln!(ret, "{} @ {}", name, item)?;
 
-    //TODO: ability
+    let ability_id = rand::sample(&mut rng, env.pokemon_abilities.get(id).unwrap(), 1)[0];
+    writeln!(ret, "{}", env.ability_names.get(ability_id).unwrap())?;
 
     for move_id in moves {
         writeln!(ret, "- {}", env.move_names.get(move_id).unwrap())?;
@@ -41,7 +42,9 @@ fn make_pokemon(env: &Env) -> Result<String, std::fmt::Error> {
 struct Env {
     pub pokemon_names: HashMap<u32, String>,
     pub pokemon_moves: HashMap<u32, Vec<u32>>,
+    pub pokemon_abilities: HashMap<u32, Vec<u32>>,
     pub move_names: HashMap<u32, String>,
+    pub ability_names: HashMap<u32, String>,
     pub items: Vec<String>,
 }
 
@@ -74,7 +77,41 @@ impl Env {
             move_names.insert(n_row.move_id, n_row.name);
         }
 
-        //
+        let mut ability_name_rdr = csv::Reader::from_file(csv_dir.join("ability_names.csv"))
+                                               .unwrap()
+                                               .has_headers(true);
+        let mut ability_stat_rdr = csv::Reader::from_file(csv_dir.join("abilities.csv"))
+                                               .unwrap()
+                                               .has_headers(true);
+
+        let mut abilities = HashSet::new();
+        let mut ability_names = HashMap::new();
+
+        for (id, _, _, is_main) in ability_stat_rdr.decode::<(u32, String, u32, u32)>()
+                                                            .filter_map(|a| a.ok())
+        {
+            if is_main == 1 {
+                abilities.insert(id);
+            }
+        }
+
+        for a_name in ability_name_rdr.decode::<MoveName>().filter_map(|a| a.ok()).filter(|n| n.lang_id == 9) {
+            if abilities.contains(&a_name.move_id) {
+                ability_names.insert(a_name.move_id, a_name.name);
+            }
+        }
+
+        let mut ability_rdr = csv::Reader::from_file(csv_dir.join("pokemon_abilities.csv"))
+                                          .unwrap()
+                                          .has_headers(true);
+        let mut pokemon_abilities = HashMap::new();
+        for (mon_id, ability, _, _) in ability_rdr.decode::<(u32, u32, u32, u32)>().filter_map(|a| a.ok()) {
+            if abilities.contains(&ability) {
+                let this_abilities = pokemon_abilities.entry(mon_id).or_insert(Vec::new());
+                this_abilities.push(ability);
+            }
+        }
+
         let mut item_rdr = csv::Reader::from_file(csv_dir.join("items.csv"))
                                        .unwrap()
                                        .has_headers(true);
@@ -99,7 +136,9 @@ impl Env {
         Env {
             pokemon_names: pokemon_names,
             pokemon_moves: pokemon_moves,
+            pokemon_abilities: pokemon_abilities,
             move_names: move_names,
+            ability_names: ability_names,
             items: item_names,
         }
     }
