@@ -13,7 +13,9 @@ Before running this, you'll need to do the following:
 - [Set up an application with Twitter](https://apps.twitter.com/)
 - Put the consumer key/secret into the files `src/consumer_key` and `src/consumer_secret`
 
-Once all that's set up, simply `cargo run` and it will load everything up.
+Once all that's set up, simply `cargo run` and it will load everything up. If you just want to see a
+moveset without going through Twitter, you can pass `-s`/`--skip-twitter` to it, via `cargo run --
+-s`.
 
 On the first run, it will ask you to authenticate with the desired account. After that, every time
 you run it, it will load up all the pokemon information and post one moveset to Twitter.
