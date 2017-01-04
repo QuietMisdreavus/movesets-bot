@@ -58,6 +58,8 @@ impl Env {
     fn load() -> Env {
         let csv_dir = Path::new(CSV_PATH);
 
+        println!("Loading pokemon names...");
+
         let mut name_rdr = csv::Reader::from_file(csv_dir.join("pokemon_species_names.csv"))
                                    .unwrap()
                                    .has_headers(true);
@@ -65,6 +67,8 @@ impl Env {
         for s_row in name_rdr.decode::<SpeciesName>().filter_map(|n| n.ok()).filter(|n| n.lang_id == 9) {
             pokemon_names.insert(s_row.species_id, s_row.name);
         }
+
+        println!("Loading pokemon moves...");
 
         let mut move_rdr = csv::Reader::from_file(csv_dir.join("pokemon_moves.csv"))
                                    .unwrap()
@@ -74,6 +78,8 @@ impl Env {
             let moves = pokemon_moves.entry(m_row.pokemon_id).or_insert(Vec::new());
             moves.push(m_row.move_id);
         }
+
+        println!("Loading move names...");
 
         let mut move_name_rdr = csv::Reader::from_file(csv_dir.join("move_names.csv"))
                                         .unwrap()
@@ -93,6 +99,8 @@ impl Env {
         let mut abilities = HashSet::new();
         let mut ability_names = HashMap::new();
 
+        println!("Loading ability list...");
+
         for (id, _, _, is_main) in ability_stat_rdr.decode::<(u32, String, u32, u32)>()
                                                             .filter_map(|a| a.ok())
         {
@@ -101,11 +109,15 @@ impl Env {
             }
         }
 
+        println!("Loading ability names...");
+
         for a_name in ability_name_rdr.decode::<MoveName>().filter_map(|a| a.ok()).filter(|n| n.lang_id == 9) {
             if abilities.contains(&a_name.move_id) {
                 ability_names.insert(a_name.move_id, a_name.name);
             }
         }
+
+        println!("Loading abilities for pokemon...");
 
         let mut ability_rdr = csv::Reader::from_file(csv_dir.join("pokemon_abilities.csv"))
                                           .unwrap()
@@ -127,11 +139,15 @@ impl Env {
         let mut items = HashSet::new();
         let mut item_names = Vec::new();
 
+        println!("Loading item list...");
+
         for item_row in item_rdr.decode::<Item>().filter_map(|i| i.ok()) {
             if [3,4,5,6,7,12,13,15,17,18,19].contains(&item_row.category) {
                 items.insert(item_row.item_id);
             }
         }
+
+        println!("Loading item names...");
 
         for (item_id, lang_id, name) in item_name_rdr.decode::<(u32, u32, String)>().filter_map(|n| n.ok()) {
             if lang_id == 9 && items.contains(&item_id) {
