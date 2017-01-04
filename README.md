@@ -17,3 +17,63 @@ Once all that's set up, simply `cargo run` and it will load everything up.
 
 On the first run, it will ask you to authenticate with the desired account. After that, every time
 you run it, it will load up all the pokemon information and post one moveset to Twitter.
+
+Some example sets:
+
+```text
+Registeel @ Pixie Plate
+Light Metal
+- Protect
+- Stealth Rock
+- Charge Beam
+- Frustration
+
+Gastly @ Stone Plate
+Levitate
+- Snatch
+- Spite
+- Night Shade
+- Snore
+
+Bastiodon @ Hard Stone
+Sturdy
+- Round
+- Block
+- Attract
+- Taunt
+
+Geodude @ Toxic Plate
+Sand Veil
+- Superpower
+- Gyro Ball
+- Earth Power
+- Tackle
+
+Porygon @ Destiny Knot
+Download
+- Sleep Talk
+- Rest
+- Flash
+- Confide
+
+Hoopa @ Rose Incense
+Magician
+- Protect
+- Astonish
+- Skill Swap
+- Dual Chop
+
+Swellow @ Maranga Berry
+Guts
+- Wing Attack
+- Snore
+- Round
+- Roost
+
+Grotle @ Eject Button
+Overgrow
+- Nature Power
+- Cut
+- Confide
+- Mega Drain
+```
