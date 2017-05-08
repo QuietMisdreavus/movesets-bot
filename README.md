@@ -19,7 +19,7 @@ moveset without going through Twitter, you can pass `-s`/`--skip-twitter` to it,
 
 On the first run, it will ask you to authenticate with the desired account. After that, every time
 you run it, it will load up all the pokemon information and start up a loop where it will post one
-moveset to Twitter every two hours.
+moveset to Twitter every four hours.
 
 Some example sets:
 

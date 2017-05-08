@@ -45,7 +45,7 @@ fn main() {
             let post = egg_mode::tweet::DraftTweet::new(&mon);
             post.send(&config.con_token, &config.access_token).unwrap();
 
-            std::thread::sleep(std::time::Duration::from_secs(60*60*2));
+            std::thread::sleep(std::time::Duration::from_secs(60*60*4));
         }
     }
     else {
